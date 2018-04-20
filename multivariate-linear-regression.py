@@ -3,13 +3,13 @@ import numpy as np
 import csv
 import matplotlib.pyplot as plt
 
-n = 16 # number of input features.
-m = 60 # number of training examples.
-grad = np.zeros(shape = (n, 1))
-theta = np.ones(shape=(n, 1), dtype = float)
-hx = np.ones(shape=(m, 1), dtype = float)
+n = 5 # number of input features.
+m = 82 # number of training examples.
+grad = np.zeros(shape = (n, 1), dtype = np.float64)
+theta = np.ones(shape=(n, 1), dtype = np.float64)
+hx = np.ones(shape=(m, 1), dtype = np.float64)
 
-file_handle = open("datasets/air-pollution/data.csv", "r")
+file_handle = open("datasets/octane/data.csv", "r")
 reader = csv.reader(file_handle, delimiter = ',')
 
 learning_rate = 1e-6
@@ -24,38 +24,51 @@ itr_list = []
 
 def gradient_descent_algorithm():
 	global theta, grad
-	num_itrs = 10000
-	for itr in range(num_itrs):
+	for itr in range(10000):
 		file_handle.seek(0)
 		total_cost = 0.0
 		idx = 0
+
 		for row in reader:
-			X = [float(x) for x in row[0: -1]]
+
+			X = [float(x) for x in row[0:n]]
 			# list of floats
 			X = np.asarray(X)
+			#converting to numpy array
 			np.reshape(X, [n, 1])
+
 			hx[idx][0] = h(X)
-			y_correct = float(row[0])
+
+			y_correct = float(row[n])
 			diff = (hx[idx][0] - y_correct)
-			total_cost += (diff * diff)
+			total_cost += ((diff * diff)/(2*m))
+			#print(total_cost)
+
 			idx += 1
+
 		for j in range(n):
 			grad[j][0] = 0.0
 			i = 0
 			file_handle.seek(0)
+
 			for row in reader:
-				y_correct = float(row[-1])
+
+				y_correct = float(row[n])
 				xij = float(row[j])
+
 				diff = hx[i][0] - y_correct
 				grad[j][0] += ((learning_rate * diff * xij) / m)
+				
 				i += 1
 
 		theta = theta - grad
-		total_cost = total_cost /(2 * m)
+		
 		cost_list.append(total_cost)
 		itr_list.append(itr + 1)
 
 gradient_descent_algorithm()
+
+
 
 
 plt.plot(itr_list, cost_list, label = "cost")
@@ -74,7 +87,6 @@ plt.show()
 
 
 
-
 ypaxis = []
 ycaxis = []
 xaxis = []
@@ -82,12 +94,12 @@ xaxis = []
 index = 0
 file_handle.seek(0)
 for row in reader:
-	X = [float(x) for x in row[1:]]
+	X = [float(x) for x in row[0:n]]
 	# list of floats
 	X = np.asarray(X)
 	np.reshape(X, [n, 1])
 	pred = h(X)
-	y_correct = float(row[0])
+	y_correct = float(row[n])
 	index += 1
 	ypaxis.append(pred)
 	ycaxis.append(y_correct)
