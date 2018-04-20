@@ -45,7 +45,7 @@ def gradient_descent_algorithm():
 			file_handle.seek(0)
 			for row in reader:
 				y_correct = float(row[-1])
-				xij = float(row[j + 1])
+				xij = float(row[j])
 				diff = hx[i][0] - y_correct
 				grad[j][0] += ((learning_rate * diff * xij) / m)
 				i += 1
